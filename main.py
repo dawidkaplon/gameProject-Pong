@@ -27,18 +27,20 @@ MENU_CHOOSING_SOUND = pygame.mixer.Sound(os.path.join('sounds', 'menu_choosing_s
 
 FPS = 100
 VEL_PLAYER = 5
-VEL_X_BALL = 4
-VEL_Y_BALL = 2
 player1_score = 0
 player2_score = 0
 
+# Creating player objects
 player1 = pygame.Rect(20, HEIGHT // 2 - 40, 20, 120)
 player2 = pygame.Rect(WIDTH - 40, HEIGHT // 2 - 40, 20, 120)
 
+# Ball basic config
 ball_base_position = [WIDTH // 2, 100]
 ball = pygame.Rect(ball_base_position[0], ball_base_position[1], 20, 20)
 ball_x_direction = random.choice(['left', 'right'])
 ball_y_direction = 'down'
+VEL_X_BALL = 4  # Ball's speed in x-axis
+VEL_Y_BALL = 2  # Ball's speed in y-axis (Basically just height of y-bounce after collision)
 hit_count = 0  # Counting times ball hit the paddle, increasing ball's VEL by 1 every 5 hits
 
 # Setting flags to start the appropriate game at the player's will
@@ -72,13 +74,14 @@ def ball_player_collision(player, direction):
 		PADDLE_HIT_SOUND.play()
 		ball_x_direction = direction
 		hit_count += 1
-		# Increasing ball's speed every 10 hits
+		# Increasing ball's speed by 1 every 10 hits
 		if hit_count == 1:
 			VEL_X_BALL = 8
 		elif hit_count == 11:
 			VEL_X_BALL += 1
 			hit_count = 2
 
+		# Ball collision with specific place on player's paddle
 		if ball.y <= player.y + 10:  # Hitting top corner of paddle (+10px)
 			ball_y_direction = 'up'
 			VEL_Y_BALL = 4
@@ -142,7 +145,7 @@ def easy_bot_movement():
 	"""Next three functions takes care of AI bot movement (three different difficulties)"""
 	bot = player2
 	if ball.y <= bot.y + 40 and bot.y - 1.5 >= 0:
-		bot.y -= 1.8
+		bot.y -= 1.8  # Changing bot paddle position depending on ball's y
 	elif ball.y > bot.y and bot.y + 1.5 <= HEIGHT - bot.height:
 		bot.y += 1.8
 
@@ -188,7 +191,7 @@ def display_score():
 		VEL_X_BALL = 3
 		VEL_Y_BALL = 2
 		hit_count = 0
-		ball_x_direction = random.choice(['left', 'right'])  # Sending ball back to scorer after score
+		ball_x_direction = random.choice(['left', 'right'])
 		ball_y_direction = 'down'
 
 
@@ -213,7 +216,7 @@ def starting_window():
 	return_button = Button(WIDTH - 265, HEIGHT - 85, 250, 70, BLACK, GREY, "RETURN", 'arial', 45)
 
 	while flag == 'basic_menu':
-		two_players = False   # Resetting variables after game's restart
+		two_players = False   # Resetting every flag after game's restart so movement won't loop
 		one_player_easy = False
 		one_player_medium = False
 		one_player_hard = False
@@ -239,6 +242,7 @@ def starting_window():
 							exit()
 						elif event.type == pygame.MOUSEBUTTONDOWN:
 							if one_player_button.is_clicked(event):
+								# Options appearing after pressing 'one player' button
 								MENU_CHOOSING_SOUND.play()
 								flag = 'one_player_menu'
 
@@ -343,7 +347,7 @@ def main():
 	clock = pygame.time.Clock()
 
 	while run:
-		clock.tick(FPS)
+		clock.tick(FPS)  # Setting frames as 100/second
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
 				exit()
